@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchPosts, deletePost } from '../../features/postsSlice';
+import { fetchPosts, deletePost } from '../../features/postsSlice'; // Changed from fetchPostById to fetchPosts
 import PostItem from './PostItem';
 
 export default function PostList() {
@@ -9,12 +9,13 @@ export default function PostList() {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchPosts());
+    dispatch(fetchPosts()); // Now using fetchPosts instead of fetchPostById
   }, [dispatch]);
 
   const handleDelete = async (postId) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       await dispatch(deletePost(postId));
+      dispatch(fetchPosts()); // Refresh the list after deletion
     }
   };
 

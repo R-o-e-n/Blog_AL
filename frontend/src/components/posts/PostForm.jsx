@@ -15,7 +15,15 @@ export default function PostForm() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const { status, categories } = useSelector((state) => state.posts);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return (
+      <div className="alert alert-warning">
+        Only administrators can create posts.
+      </div>
+    );
+  }
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);

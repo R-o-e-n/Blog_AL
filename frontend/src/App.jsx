@@ -8,6 +8,7 @@ import Register from './components/auth/Register';
 import PrivateRoute from './components/shared/PrivateRoute';
 import Navbar from './components/shared/Navbar';
 import NotFound from './pages/NotFound';
+import PostDetail from './components/posts/PostDetail';
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
           
+
+          <Route path="/posts/:id" element={<PostDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
