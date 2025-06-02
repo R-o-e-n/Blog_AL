@@ -197,3 +197,38 @@ body {
     margin: 1rem;
   }
 }
+/* Add to your existing CSS */
+.category-selection {
+  margin: 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.category-selection label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.category-list {
+  margin: 1rem 0;
+}
+
+.category-list button {
+  margin-right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.category-list button:hover {
+  background: #4361ee;
+  color: white;
+}

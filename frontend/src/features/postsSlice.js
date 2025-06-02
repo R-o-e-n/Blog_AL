@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Async Thunks për të gjitha operacionet
+// Async Thunks for all operations
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await axios.get('/api/posts');
   return response.data;
@@ -21,6 +21,14 @@ export const createPost = createAsyncThunk(
   }
 );
 
+export const fetchCategories = createAsyncThunk(
+  'posts/fetchCategories',
+  async () => {
+    const response = await axios.get('/api/categories');
+    return response.data;
+  }
+);
+
 export const updatePost = createAsyncThunk(
   'posts/updatePost',
   async ({ postId, postData }, { getState }) => {
@@ -30,6 +38,19 @@ export const updatePost = createAsyncThunk(
         'x-auth-token': token
       }
     });
+    return response.data;
+  }
+);
+
+export const addCategory = createAsyncThunk(
+  'posts/addCategory',
+  async ({ postId, categoryId }, { getState }) => {
+    const { token } = getState().auth;
+    const response = await axios.patch(
+      `/api/posts/${postId}/categories`,
+      { categoryId },
+      { headers: { 'x-auth-token': token } }
+    );
     return response.data;
   }
 );
@@ -47,14 +68,51 @@ export const deletePost = createAsyncThunk(
   }
 );
 
+// Comment-related async thunks
+export const addComment = createAsyncThunk(
+  'posts/addComment',
+  async ({ postId, content }, { getState }) => {
+    const { token } = getState().auth;
+    const response = await axios.post(
+      `/api/posts/${postId}/comments`,
+      { content },
+      { headers: { 'x-auth-token': token } }
+    );
+    return { postId, comment: response.data };
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  'posts/deleteComment',
+  async ({ postId, commentId }, { getState }) => {
+    const { token } = getState().auth;
+    await axios.delete(`/api/posts/${postId}/comments/${commentId}`, {
+      headers: { 'x-auth-token': token }
+    });
+    return { postId, commentId };
+  }
+);
+
 const postsSlice = createSlice({
   name: 'posts',
   initialState: {
     items: [],
+    categories: [],
     status: 'idle',
-    error: null
+    error: null,
+    filteredItems: []
   },
-  reducers: {},
+  reducers: {
+    filterByCategory: (state, action) => {
+      if (!action.payload) {
+        state.filteredItems = state.items;
+      } else {
+        state.filteredItems = state.items.filter(post => 
+          post.categories?.some(cat => cat._id === action.payload)
+        );
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch Posts
@@ -76,7 +134,7 @@ const postsSlice = createSlice({
       })
       .addCase(createPost.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items.unshift(action.payload); // Shton postin e ri në fillim
+        state.items.unshift(action.payload);
       })
       .addCase(createPost.rejected, (state, action) => {
         state.status = 'failed';
@@ -94,8 +152,43 @@ const postsSlice = createSlice({
       // Delete Post
       .addCase(deletePost.fulfilled, (state, action) => {
         state.items = state.items.filter(post => post._id !== action.payload);
+      })
+      
+      // Fetch Categories
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+      })
+      
+      // Add Category
+      .addCase(addCategory.fulfilled, (state, action) => {
+        const index = state.items.findIndex(p => p._id === action.payload._id);
+        if (index !== -1) state.items[index] = action.payload;
+      })
+      
+      // Add Comment
+      .addCase(addComment.fulfilled, (state, action) => {
+        const { postId, comment } = action.payload;
+        const postIndex = state.items.findIndex(post => post._id === postId);
+        if (postIndex !== -1) {
+          if (!state.items[postIndex].comments) {
+            state.items[postIndex].comments = [];
+          }
+          state.items[postIndex].comments.push(comment);
+        }
+      })
+      
+      // Delete Comment
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        const { postId, commentId } = action.payload;
+        const postIndex = state.items.findIndex(post => post._id === postId);
+        if (postIndex !== -1) {
+          state.items[postIndex].comments = state.items[postIndex].comments.filter(
+            comment => comment._id !== commentId
+          );
+        }
       });
   }
 });
 
+export const { filterByCategory } = postsSlice.actions;
 export default postsSlice.reducer;

@@ -1,29 +1,46 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { createPost } from '../../features/postsSlice';
+import { createPost, fetchCategories } from '../../features/postsSlice';
+import { useEffect } from 'react';
 
 export default function PostForm() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    categories: []
+  });
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
+  
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
-  const { status } = useSelector((state) => state.posts);
+  const { status, categories } = useSelector((state) => state.posts);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const handleCategoryToggle = (categoryId) => {
+    setFormData(prev => ({
+      ...prev,
+      categories: prev.categories.includes(categoryId)
+        ? prev.categories.filter(id => id !== categoryId)
+        : [...prev.categories, categoryId]
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    if (image) formData.append('image', image);
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('content', formData.content);
+    data.append('categories', JSON.stringify(formData.categories));
+    if (image) data.append('image', image);
 
     try {
-      await dispatch(createPost(formData)).unwrap();
-      
-      setTitle('');
-      setContent('');
+      await dispatch(createPost(data)).unwrap();
+      // Reset form
+      setFormData({ title: '', content: '', categories: [] });
       setImage(null);
       setError('');
     } catch (err) {
@@ -39,25 +56,37 @@ export default function PostForm() {
         <input
           type="text"
           placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={formData.title}
+          onChange={(e) => setFormData({...formData, title: e.target.value})}
           required
         />
         <textarea
           placeholder="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={formData.content}
+          onChange={(e) => setFormData({...formData, content: e.target.value})}
           required
         />
+        
+        <div className="category-selection">
+          <h4>Categories:</h4>
+          {categories.map(category => (
+            <label key={category._id}>
+              <input
+                type="checkbox"
+                checked={formData.categories.includes(category._id)}
+                onChange={() => handleCategoryToggle(category._id)}
+              />
+              {category.name}
+            </label>
+          ))}
+        </div>
+
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setImage(e.target.files[0])}
         />
-        <button 
-          type="submit"
-          disabled={status === 'loading'}
-        >
+        <button type="submit" disabled={status === 'loading'}>
           {status === 'loading' ? 'Posting...' : 'Submit'}
         </button>
       </form>
