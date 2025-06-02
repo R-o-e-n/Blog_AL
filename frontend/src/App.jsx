@@ -7,10 +7,14 @@ import PostDetail from './pages/PostDetail';
 import CategoryForm from './components/CategoryForm';
 import Navbar from './components/Navbar';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
+       <div className="with-navbar">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/posts/:id" element={<PostDetail />} />
@@ -19,7 +23,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      </div>
     </BrowserRouter>
+    
   );
 }
 

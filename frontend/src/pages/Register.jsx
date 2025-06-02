@@ -1,87 +1,56 @@
-import React, { useState } from 'react';
+// Register.jsx
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function Register() {
+  const [formData, setFormData] = useState({
+    username: '', email: '', password: '', password2: ''
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector(state => state.auth);
+  const { isLoading, error } = useSelector((state) => state.auth);
 
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    password2: ''
-  });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const [matchError, setMatchError] = useState('');
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    if (name === 'password' || name === 'password2') {
-      if (formData.password !== formData.password2) {
-        setMatchError('Passwords do not match');
-      } else {
-        setMatchError('');
-      }
-    }
-  };
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.password2) {
-      setMatchError('Passwords do not match');
-      return;
-    }
     const result = await dispatch(registerUser(formData));
     if (result.meta.requestStatus === 'fulfilled') {
+      toast.success("Registered! You can now log in.");
       navigate('/login');
+    } else {
+      toast.error(result.payload || "Register failed!");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password2"
-        placeholder="Confirm Password"
-        value={formData.password2}
-        onChange={handleChange}
-        required
-      />
-      {matchError && <p style={{ color: 'red' }}>{matchError}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button type="submit" disabled={isLoading}>Register</button>
-    </form>
+    <div className="form-bg">
+      <form className="form-card" onSubmit={handleSubmit}>
+        <h2 className="form-title">Register to Blog<span className="accent">AL</span></h2>
+        <div className="form-group">
+          <label>Username</label>
+          <input name="username" onChange={handleChange} placeholder="Enter your username" required />
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input type="email" name="email" onChange={handleChange} placeholder="Enter your email" required />
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input type="password" name="password" onChange={handleChange} placeholder="••••••" required />
+        </div>
+        <div className="form-group">
+          <label>Repeat Password</label>
+          <input type="password" name="password2" onChange={handleChange} placeholder="••••••" required />
+        </div>
+        <button type="submit" className="form-btn" disabled={isLoading}>
+          {isLoading ? 'Registering...' : 'Register'}
+        </button>
+        {error && <div className="form-error">{error}</div>}
+      </form>
+    </div>
   );
 }

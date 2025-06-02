@@ -12,18 +12,45 @@ export default function PostDetail() {
     axios.get(`/posts/${id}`).then(res => setPost(res.data));
   }, [id]);
 
-  if (!post) return <p>Loading post...</p>;
+  if (!post) return <div className="postdetail-loader">Loading post...</div>;
 
   return (
-    <div>
-      <h2>{post.title}</h2>
-      <img src={`http://localhost:8000/uploads/${post.image}`} alt={post.title} width="200" />
-
-      <p>{post.content}</p>
-
-      <h3>Comments</h3>
-      <CommentList postId={id} />
-      <CommentForm postId={id} />
+    <div className="postdetail-wrapper">
+      <div className="postdetail-card">
+        <div className="postdetail-imagewrap">
+          {post.image ? (
+            <img src={`http://localhost:8000/uploads/${post.image}`} alt={post.title} />
+          ) : (
+            <div className="postdetail-img-placeholder">No Image</div>
+          )}
+        </div>
+        <div className="postdetail-content">
+          <h2>{post.title}</h2>
+          <div className="postdetail-meta">
+            <span>
+              {post.author?.username ? (
+                <>
+                  <span className="postdetail-avatar">
+                    {post.author.username[0]?.toUpperCase()}
+                  </span>
+                  <b>{post.author.username}</b>
+                </>
+              ) : (
+                <b>Unknown</b>
+              )}
+            </span>
+            <span className="postdetail-date">
+              {post.createdAt && new Date(post.createdAt).toLocaleDateString()}
+            </span>
+          </div>
+          <p className="postdetail-text">{post.content}</p>
+        </div>
+      </div>
+      <div className="postdetail-comments">
+        <h3>Comments</h3>
+        <CommentList postId={id} />
+        <CommentForm postId={id} />
+      </div>
     </div>
   );
 }

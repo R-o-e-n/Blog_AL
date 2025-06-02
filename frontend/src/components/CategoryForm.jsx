@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { createCategory, fetchCategories } from '../redux/categorySlice';
 import { useState } from 'react';
 import API from '../services/api'; 
-
+import { toast } from 'react-toastify';
 export default function CategoryForm() {
   const dispatch = useDispatch();
   const [form, setForm] = useState({ name: '', description: '' });
@@ -16,14 +16,13 @@ export default function CategoryForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await dispatch(createCategory(form)).unwrap(); 
-      dispatch(fetchCategories()); 
-      setForm({ name: '', description: '' }); 
-      alert("Category created!"); 
+      await dispatch(createCategory(form)).unwrap();
+      dispatch(fetchCategories());
+      setForm({ name: '', description: '' });
+      toast.success("Category created!");
     } catch (err) {
-      alert("Error: " + (err?.message || JSON.stringify(err)));
+      toast.error(err?.message || "Failed to create category");
     }
   };
 

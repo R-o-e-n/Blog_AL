@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { fetchCategories } from '../redux/categorySlice';
 import API from '../services/api'; 
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function CreatePost() {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export default function CreatePost() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: '',
+    category: '', // do të ruajmë _id e kategorisë
     image: null,
   });
 
@@ -30,34 +31,53 @@ export default function CreatePost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.category) {
+      toast.error("Select a category!");
+      return;
+    }
     const data = new FormData();
     data.append('title', formData.title);
     data.append('content', formData.content);
-    data.append('categories', formData.category);
+    // Për backend-in tënd pritet "categories" si array ose si string? Më shpesh _id, jo emri!
+    data.append('categories', formData.category); // vendos id-në e kategorisë
     data.append('image', formData.image);
 
     try {
-      await API.post('/posts', data); 
+      await API.post('/posts', data);
+      toast.success("Post created!");
       navigate('/');
     } catch (err) {
-      console.error("Post creation error:", err);
-      alert("Failed to create post: " + (err?.response?.data?.message || err.message));
+      toast.error(err?.response?.data?.error || "Post creation failed");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create Post</h2>
-      <input name="title" placeholder="Title" onChange={handleChange} required />
-      <textarea name="content" placeholder="Content" onChange={handleChange} required />
-      <select name="category" onChange={handleChange} required>
-        <option value="">Select Category</option>
-        {categories.map(cat => (
-          <option key={cat._id} value={cat.name}>{cat.name}</option>
-        ))}
-      </select>
-      <input type="file" name="image" accept="image/*" onChange={handleChange} required />
-      <button type="submit">Create</button>
-    </form>
+    <div className="form-bg">
+      <form className="form-card" onSubmit={handleSubmit} encType="multipart/form-data">
+        <h2 className="form-title">Create Post</h2>
+        <div className="form-group">
+          <label>Title</label>
+          <input name="title" value={formData.title} placeholder="Title" onChange={handleChange} required />
+        </div>
+        <div className="form-group">
+          <label>Content</label>
+          <textarea name="content" value={formData.content} placeholder="Content" onChange={handleChange} required />
+        </div>
+        <div className="form-group">
+          <label>Category</label>
+          <select name="category" value={formData.category} onChange={handleChange} required>
+            <option value="">Select Category</option>
+            {categories.map(cat => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Image</label>
+          <input type="file" name="image" accept="image/*" onChange={handleChange} required />
+        </div>
+        <button type="submit" className="form-btn">Create</button>
+      </form>
+    </div>
   );
 }
