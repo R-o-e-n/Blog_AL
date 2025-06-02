@@ -8,13 +8,18 @@ export default function CommentForm({ postId }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addComment({ postId, text }));
+    dispatch(addComment({ postId, content: text }));
     setText('');
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <textarea value={text} onChange={e => setText(e.target.value)} required />
+      <textarea
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="Write a comment..."
+        required
+      />
       <button type="submit">Submit</button>
     </form>
   );

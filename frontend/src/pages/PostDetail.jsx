@@ -17,7 +17,8 @@ export default function PostDetail() {
   return (
     <div>
       <h2>{post.title}</h2>
-      <img src={`/uploads/${post.image}`} alt={post.title} width="300" />
+      <img src={`http://localhost:8000/uploads/${post.image}`} alt={post.title} width="200" />
+
       <p>{post.content}</p>
 
       <h3>Comments</h3>

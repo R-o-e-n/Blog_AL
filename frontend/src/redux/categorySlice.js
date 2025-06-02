@@ -6,8 +6,8 @@ export const fetchCategories = createAsyncThunk('categories/fetch', async () => 
   return res.data;
 });
 
-export const createCategory = createAsyncThunk('categories/create', async (name) => {
-  const res = await API.post('/categories', { name });
+export const createCategory = createAsyncThunk('categories/create', async ({ name, description }) => {
+  const res = await API.post('/categories', { name, description });
   return res.data;
 });
 

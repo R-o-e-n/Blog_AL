@@ -6,8 +6,8 @@ export const fetchComments = createAsyncThunk('comments/fetch', async (postId) =
   return res.data;
 });
 
-export const addComment = createAsyncThunk('comments/add', async ({ postId, text }) => {
-  const res = await API.post('/comments', { postId, text });
+export const addComment = createAsyncThunk('comments/add', async ({ postId, content }) => {
+  const res = await API.post('/comments', { postId, content });
   return res.data;
 });
 

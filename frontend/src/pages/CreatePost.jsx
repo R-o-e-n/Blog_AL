@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchCategories } from '../redux/categorySlice';
-import axios from '../services/api';
+import API from '../services/api'; 
 import { useNavigate } from 'react-router-dom';
 
 export default function CreatePost() {
@@ -33,11 +33,16 @@ export default function CreatePost() {
     const data = new FormData();
     data.append('title', formData.title);
     data.append('content', formData.content);
-    data.append('category', formData.category);
+    data.append('categories', formData.category);
     data.append('image', formData.image);
 
-    await axios.post('/posts', data);
-    navigate('/');
+    try {
+      await API.post('/posts', data); 
+      navigate('/');
+    } catch (err) {
+      console.error("Post creation error:", err);
+      alert("Failed to create post: " + (err?.response?.data?.message || err.message));
+    }
   };
 
   return (

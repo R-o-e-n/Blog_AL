@@ -1,0 +1,29 @@
+body {
+  font-family: sans-serif;
+  padding: 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: purple;
+  font-weight: bold;
+}
+
+a:hover {
+  color: darkblue;
+}
+
+button {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  background-color: purple;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 0.5rem;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}

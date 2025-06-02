@@ -19,9 +19,10 @@ export default function PostList() {
       {Array.isArray(posts) && posts.length > 0 ? (
         posts.map(post => (
           <div key={post._id} className="post-preview">
-            <Link to={`/posts/${post._id}`}>
-              <h2>{post.title}</h2>
-            </Link>
+            <h2>{post.title}</h2>
+            <p>{post.content.substring(0, 100)}...</p>
+            <Link to={`/posts/${post._id}`}><button>Read More</button></Link>
+
             <img src={`http://localhost:8000/uploads/${post.image}`} alt={post.title} width="200" />
 
 

@@ -1,33 +1,38 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { createCategory, fetchCategories } from '../redux/categorySlice';
 import { useState } from 'react';
-import { createCategory } from '../redux/categorySlice';
+import API from '../services/api'; 
 
 export default function CategoryForm() {
-  const { user } = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  const [name, setName] = useState('');
+  const [form, setForm] = useState({ name: '', description: '' });
 
-  const isAdmin = user?.role === 'admin';
+  const handleChange = (e) => {
+    setForm(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
 
-  if (!isAdmin) return null;
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    dispatch(createCategory(name));
-    setName('');
+
+    try {
+      await dispatch(createCategory(form)).unwrap(); 
+      dispatch(fetchCategories()); 
+      setForm({ name: '', description: '' }); 
+      alert("Category created!"); 
+    } catch (err) {
+      alert("Error: " + (err?.message || JSON.stringify(err)));
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Create New Category</h3>
-      <input
-        type="text"
-        value={name}
-        placeholder="Category name"
-        onChange={e => setName(e.target.value)}
-      />
-      <button type="submit">Add</button>
+      <h2>Add Category</h2>
+      <input name="name" value={form.name} placeholder="Category Name" onChange={handleChange} required />
+      <textarea name="description" value={form.description} placeholder="Description" onChange={handleChange} />
+      <button type="submit">Create</button>
     </form>
   );
 }
