@@ -5,15 +5,7 @@ import { fetchPostById } from '../../features/postsSlice';
 import CommentList from '../comments/CommentList';
 import CommentForm from '../comments/CommentForm';
 import CategoryBadge from '../categories/CategoryBadge';
-useEffect(() => {
-  if (id) {
-    dispatch(fetchPostById(id))
-      .unwrap()
-      .catch((err) => {
-        console.error('Failed to fetch post:', err);
-      });
-  }
-}, [id, dispatch]);
+
 export default function PostDetail() {
   const { id } = useParams();
   const location = useLocation();
@@ -29,7 +21,15 @@ export default function PostDetail() {
 
   if (status === 'loading') return <div>Loading...</div>;
   if (!currentPost) return <div>Post not found</div>;
-
+  useEffect(() => {
+  if (id) {
+    dispatch(fetchPostById(id))
+      .unwrap()
+      .catch((err) => {
+        console.error('Failed to fetch post:', err);
+      });
+  }
+  }, [id, dispatch]);
   return (
     <div className="post-detail">
       <article>
