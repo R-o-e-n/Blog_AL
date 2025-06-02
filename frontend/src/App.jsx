@@ -4,7 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
-import { AuthProvider } from './context/AuthContext';
+
 
 function App() {
   return (
