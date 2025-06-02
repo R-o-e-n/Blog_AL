@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../services/api';
+import API from '../services/api';
 
 export const fetchCategories = createAsyncThunk('categories/fetch', async () => {
-  const res = await axios.get('/categories');
+  const res = await API.get('/categories');
   return res.data;
 });
 
 export const createCategory = createAsyncThunk('categories/create', async (name) => {
-  const res = await axios.post('/categories', { name });
+  const res = await API.post('/categories', { name });
   return res.data;
 });
 

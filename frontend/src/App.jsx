@@ -8,7 +8,7 @@ import CreatePost from './pages/CreatePost';
 
 function App() {
   return (
-    <AuthProvider>
+    
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -18,7 +18,7 @@ function App() {
           <Route path="/create" element={<CreatePost />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
+    
   );
 }
 

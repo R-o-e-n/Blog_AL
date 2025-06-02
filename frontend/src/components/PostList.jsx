@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export default function PostList() {
   const dispatch = useDispatch();
-  const { posts, loading, error } = useSelector(state => state.posts);
+  const { posts = [], loading, error } = useSelector(state => state.posts);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -16,15 +16,21 @@ export default function PostList() {
 
   return (
     <div>
-      {posts.map(post => (
-        <div key={post._id} className="post-preview">
-          <Link to={`/posts/${post._id}`}>
-            <h2>{post.title}</h2>
-          </Link>
-          <img src={`/uploads/${post.image}`} alt={post.title} width="200" />
-          <p>{post.content.substring(0, 100)}...</p>
-        </div>
-      ))}
+      {Array.isArray(posts) && posts.length > 0 ? (
+        posts.map(post => (
+          <div key={post._id} className="post-preview">
+            <Link to={`/posts/${post._id}`}>
+              <h2>{post.title}</h2>
+            </Link>
+            <img src={`http://localhost:8000/uploads/${post.image}`} alt={post.title} width="200" />
+
+
+            <p>{post.content?.substring(0, 100)}...</p>
+          </div>
+        ))
+      ) : (
+        <p>No posts found.</p>
+      )}
     </div>
   );
 }
