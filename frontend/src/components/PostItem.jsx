@@ -21,7 +21,7 @@ export default function PostItem() {
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Merr postin ekzistues dhe kategoritë
+  // Merr postin ekzistues dhe kategorit
   useEffect(() => {
     async function fetchData() {
       try {
