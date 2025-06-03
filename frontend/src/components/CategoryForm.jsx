@@ -27,11 +27,36 @@ export default function CategoryForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add Category</h2>
-      <input name="name" value={form.name} placeholder="Category Name" onChange={handleChange} required />
-      <textarea name="description" value={form.description} placeholder="Description" onChange={handleChange} />
-      <button type="submit">Create</button>
-    </form>
+    <div className="form-bg">
+      <form className="form-card" onSubmit={handleSubmit}>
+        <h2 className="form-title">
+          Add <span className="accent">Category</span>
+        </h2>
+        <div className="form-group">
+          <label>Category Name</label>
+          <input
+            name="name"
+            value={form.name}
+            placeholder="Category Name"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={form.description}
+            placeholder="Description (optional)"
+            onChange={handleChange}
+            rows={3}
+          />
+        </div>
+        <button type="submit" className="form-btn">
+          Create
+        </button>
+      </form>
+    </div>
   );
+
 }

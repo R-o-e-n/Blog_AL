@@ -42,19 +42,35 @@ exports.getPostById = async (req, res) => {
   }
 };
 
-exports.updatePost = async (req, res) => {
-  try {
-    const post = await Post.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body, updatedAt: Date.now() },
-      { new: true }
-    );
-    if (!post) return res.status(404).json({ error: 'Post not found' });
-    res.status(200).json(post);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+exports.updatePost = [
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      
+      const updateFields = {
+        title: req.body.title,
+        content: req.body.content,
+        categories: req.body.categories,
+        updatedAt: Date.now()
+      };
+
+      
+      if (req.file) {
+        updateFields.image = req.file.filename;
+      }
+
+      const post = await Post.findByIdAndUpdate(
+        req.params.id,
+        { $set: updateFields },
+        { new: true }
+      );
+      if (!post) return res.status(404).json({ error: 'Post not found' });
+      res.status(200).json(post);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
-};
+];
 
 exports.deletePost = async (req, res) => {
   try {

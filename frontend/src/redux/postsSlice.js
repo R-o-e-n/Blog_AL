@@ -5,8 +5,29 @@ export const fetchPosts = createAsyncThunk('posts/fetch', async () => {
   const res = await API.get('/posts');
   return res.data;
 });
+export const deletePost = createAsyncThunk(
+  'posts/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await API.delete(`/posts/${id}`);
+      return id;
+    } catch (err) {
+      return rejectWithValue(err?.response?.data?.error || 'Failed to delete');
+    }
+  }
+);
+export const updatePost = createAsyncThunk('posts/update', async ({ id, updatedData }, { rejectWithValue }) => {
+  try {
+    const res = await API.put(`/posts/${id}`, updatedData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err?.response?.data?.error || 'Failed to update');
+  }
+});
 
-const postSlice = createSlice({
+const postsSlice = createSlice({
   name: 'posts',
   initialState: { posts: [], loading: false, error: null },
   reducers: {},
@@ -22,8 +43,14 @@ const postSlice = createSlice({
       .addCase(fetchPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.posts = state.posts.map(post =>
+          post._id === action.payload._id ? action.payload : post
+        );
       });
   }
 });
 
-export default postSlice.reducer;
+
+export default postsSlice.reducer;

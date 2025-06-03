@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../redux/authSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBiohazard } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 export default function Navbar() {
   const { user } = useSelector((state) => state.auth);
@@ -10,7 +11,20 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+
+    const username = user?.username || "User";
     dispatch(logoutUser());
+    toast.info(
+      <span>
+        👋 Bye <b>{username}</b>, you logged out!
+      </span>,
+      {
+        position: "top-right",
+        autoClose: 2500,
+        theme: "colored",
+        icon: "🦙"
+      }
+    );
     navigate('/');
   };
 
@@ -32,7 +46,10 @@ export default function Navbar() {
             <>
               <Link to="/create" className="navbar-link">Create Post</Link>
               {isAdmin && (
+                <>
                 <Link to="/add-category" className="navbar-link">Add Category</Link>
+                <Link to="/manage-categories" className="navbar-link">Update Categories</Link>
+                </>
               )}
             </>
           )}

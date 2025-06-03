@@ -10,7 +10,25 @@ export const createCategory = createAsyncThunk('categories/create', async ({ nam
   const res = await API.post('/categories', { name, description });
   return res.data;
 });
-
+export const deleteCategory = createAsyncThunk('categories/delete', async (id, { rejectWithValue }) => {
+  try {
+    await API.delete(`/categories/${id}`);
+    return id;
+  } catch (err) {
+    return rejectWithValue(err?.response?.data?.error || 'Failed to delete');
+  }
+});
+export const updateCategory = createAsyncThunk(
+  'categories/update',
+  async ({ id, name, description }, { rejectWithValue }) => {
+    try {
+      const res = await API.put(`/categories/${id}`, { name, description });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err?.response?.data?.error || 'Failed to update');
+    }
+  }
+);
 const categorySlice = createSlice({
   name: 'categories',
   initialState: { list: [], loading: false, error: null },
@@ -30,8 +48,19 @@ const categorySlice = createSlice({
       })
       .addCase(createCategory.fulfilled, (state, action) => {
         state.list.push(action.payload);
+      })
+      
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.list = state.list.filter(cat => cat._id !== action.payload);
+      })
+      
+      .addCase(updateCategory.fulfilled, (state, action) => {
+        state.list = state.list.map(cat =>
+          cat._id === action.payload._id ? action.payload : cat
+        );
       });
   }
 });
+
 
 export default categorySlice.reducer;

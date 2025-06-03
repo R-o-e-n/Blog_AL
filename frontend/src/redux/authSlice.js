@@ -10,7 +10,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (formData, thu
     const res = await API.post('/auth/login', formData);
     const payload = {
       token: res.data.token,
-      user: res.data.user // <-- must be returned from backend
+      user: res.data.user 
     };
     localStorage.setItem('user', JSON.stringify(payload));
     return payload;

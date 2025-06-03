@@ -1,4 +1,4 @@
-// Login.jsx (similarly for Register.jsx)
+
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../redux/authSlice';
 import { useNavigate } from 'react-router-dom';

@@ -639,3 +639,115 @@ button {
   transition: background 0.16s;
 }
 .form-btn:hover, .form-btn:focus { background: #be123c; }
+.form-img-preview {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+.img-thumb {
+  width: 78px;
+  height: 78px;
+  border-radius: 11px;
+  object-fit: cover;
+  border: 2px solid #f43f5e2e;
+  box-shadow: 0 2px 8px #f43f5e12;
+  background: #fff0f3;
+}
+.post-edit-btn,
+.post-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 2px;
+  padding: 3px 7px 3px 2px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.post-edit-btn:hover { background: #e0e7ff; }
+.post-delete-btn:hover { background: #ffe4e6; }
+.form-bg {
+  background: linear-gradient(120deg, #fff 70%, #fef6fb 100%);
+  min-height: 80vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 54px;
+}
+.form-card {
+  width: 360px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 28px #ef5d9913;
+  padding: 2rem 1.7rem 1.5rem 1.7rem;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  border: 1.5px solid #fee2e2;
+}
+.form-title {
+  text-align: center;
+  font-size: 1.42rem;
+  font-weight: 800;
+  color: #a30515;
+  margin-bottom: 1.2rem;
+}
+.form-title .accent {
+  color: #be123c;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.form-group label {
+  font-size: 1rem;
+  color: #dc2626;
+  font-weight: 600;
+}
+.form-card input,
+.form-card textarea {
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1.3px solid #fbcfe8;
+  outline: none;
+  font-size: 1rem;
+  background: #fff;
+  font-family: inherit;
+  transition: border 0.15s;
+}
+.form-card input:focus,
+.form-card textarea:focus {
+  border: 1.6px solid #a30515;
+  background: #fff8f3;
+}
+.form-btn {
+  margin-top: 10px;
+  background: #be123c;
+  color: #fff;
+  padding: 0.65rem 0;
+  font-size: 1.08rem;
+  border: none;
+  border-radius: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  box-shadow: 0 1px 9px #be123c23;
+  cursor: pointer;
+  transition: background 0.16s;
+}
+.form-btn:hover {
+  background: #a30515;
+}
+.manage-categories-bg {
+  background: linear-gradient(120deg, #fff 70%, #fef6fb 100%);
+  min-height: 80vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 54px;
+}
