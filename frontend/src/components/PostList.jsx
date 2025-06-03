@@ -20,12 +20,12 @@ export default function PostList() {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  // Posts të krijuar nga user-i (për "My Posts")
+  
   const myPosts = posts.filter(
     post => user && post.author && post.author._id === user._id
   );
 
-  // Filtrimi sipas kategorisë për të gjitha postet ose "My Posts"
+  
   const postsToShow = showMyPosts
     ? (categoryFilter
         ? myPosts.filter(post =>
@@ -86,7 +86,7 @@ export default function PostList() {
 
   return (
     <div className="posts-wrapper">
-      {/* Filtri i kategorive */}
+      
       <div className="posts-category-filter" style={{ marginBottom: '1rem' }}>
         <select
           value={categoryFilter || ''}
@@ -100,7 +100,7 @@ export default function PostList() {
         </select>
       </div>
 
-      {/* Tabs për user-in: All Posts / My Posts */}
+      
       {user && (
         <div className="posts-tabs">
           <button
@@ -118,7 +118,7 @@ export default function PostList() {
         </div>
       )}
 
-      {/* Cards Grid */}
+      
       <div className="posts-grid">
         {postsToShow.map(post => {
           const canEditOrDelete =
