@@ -29,8 +29,11 @@ export const updatePost = createAsyncThunk('posts/update', async ({ id, updatedD
 
 const postsSlice = createSlice({
   name: 'posts',
-  initialState: { posts: [], loading: false, error: null },
-  reducers: {},
+  initialState: { posts: [], loading: false, error: null , categoryFilter: ""},
+  reducers: {
+    setCategoryFilter: (state, action) => {
+      state.categoryFilter = action.payload;
+    }},
   extraReducers: (builder) => {
     builder
       .addCase(fetchPosts.pending, (state) => {
@@ -52,5 +55,5 @@ const postsSlice = createSlice({
   }
 });
 
-
+export const { setCategoryFilter } = postsSlice.actions;
 export default postsSlice.reducer;

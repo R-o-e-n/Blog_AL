@@ -1,65 +1,106 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts, deletePost } from '../redux/postsSlice';
+import { fetchPosts, deletePost, setCategoryFilter } from '../redux/postsSlice';
+import { fetchCategories } from '../redux/categorySlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trash, PencilSimple } from 'phosphor-react'; 
-import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 export default function PostList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { posts = [], loading, error } = useSelector(state => state.posts);
+  const { posts = [], loading, error, categoryFilter } = useSelector(state => state.posts);
+  const { list: categories } = useSelector(state => state.categories);
   const { user } = useSelector(state => state.auth);
   const [showMyPosts, setShowMyPosts] = useState(false);
 
   useEffect(() => {
     dispatch(fetchPosts());
+    dispatch(fetchCategories());
   }, [dispatch]);
 
-  const myPosts = posts.filter(post => user && post.author && post.author._id === user._id);
+  // Posts të krijuar nga user-i (për "My Posts")
+  const myPosts = posts.filter(
+    post => user && post.author && post.author._id === user._id
+  );
+
+  // Filtrimi sipas kategorisë për të gjitha postet ose "My Posts"
+  const postsToShow = showMyPosts
+    ? (categoryFilter
+        ? myPosts.filter(post =>
+            Array.isArray(post.categories)
+              ? post.categories.some(cat => cat._id === categoryFilter || cat === categoryFilter)
+              : post.categories === categoryFilter
+          )
+        : myPosts
+      )
+    : (categoryFilter
+        ? posts.filter(post =>
+            Array.isArray(post.categories)
+              ? post.categories.some(cat => cat._id === categoryFilter || cat === categoryFilter)
+              : post.categories === categoryFilter
+          )
+        : posts
+      );
 
   const handleDelete = async (postId) => {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You can't undo this action!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#f43f5e',
-        cancelButtonColor: '#aaa',
-        confirmButtonText: 'Yes, delete it!',
-        background: '#fff',
-        color: '#22223b'
-      });
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You can't undo this action!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f43f5e',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Yes, delete it!',
+      background: '#fff',
+      color: '#22223b'
+    });
 
-      if (result.isConfirmed) {
-        try {
-          await dispatch(deletePost(postId)).unwrap();
-          Swal.fire({
-            icon: 'success',
-            title: 'Deleted!',
-            text: 'Your post has been deleted.',
-            timer: 1700,
-            showConfirmButton: false,
-            background: '#fff',
-            color: '#be123c'
-          });
-        } catch (err) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: err?.message || 'Failed to delete post',
-            background: '#fff',
-            color: '#be123c'
-          });
-        }
+    if (result.isConfirmed) {
+      try {
+        await dispatch(deletePost(postId)).unwrap();
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Your post has been deleted.',
+          timer: 1700,
+          showConfirmButton: false,
+          background: '#fff',
+          color: '#be123c'
+        });
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: err?.message || 'Failed to delete post',
+          background: '#fff',
+          color: '#be123c'
+        });
       }
-    };
+    }
+  };
+
+  if (loading) return <div className="posts-loader">Loading...</div>;
+  if (error) return <div className="posts-error">{error}</div>;
 
   return (
     <div className="posts-wrapper">
-      
+      {/* Filtri i kategorive */}
+      <div className="posts-category-filter" style={{ marginBottom: '1rem' }}>
+        <select
+          value={categoryFilter || ''}
+          onChange={e => dispatch(setCategoryFilter(e.target.value))}
+          className="navbar-category-filter"
+        >
+          <option value="">All Categories</option>
+          {categories.map(cat => (
+            <option key={cat._id} value={cat._id}>{cat.name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Tabs për user-in: All Posts / My Posts */}
       {user && (
         <div className="posts-tabs">
           <button
@@ -77,8 +118,9 @@ export default function PostList() {
         </div>
       )}
 
+      {/* Cards Grid */}
       <div className="posts-grid">
-        {(showMyPosts ? myPosts : posts).map(post => {
+        {postsToShow.map(post => {
           const canEditOrDelete =
             user &&
             (post.author?._id === user._id || user.role === 'admin' || user.isAdmin);
@@ -104,11 +146,9 @@ export default function PostList() {
                   </Link>
                   {canEditOrDelete && (
                     <>
-                     
                       <Link to={`/edit/${post._id}`} className="post-edit-btn" title="Edit">
                         <PencilSimple size={21} weight="bold" color="#2563eb" style={{ verticalAlign: 'middle' }} />
                       </Link>
-                   
                       <button
                         className="post-delete-btn"
                         title="Delete"
@@ -123,7 +163,7 @@ export default function PostList() {
             </div>
           );
         })}
-        {(showMyPosts ? myPosts : posts).length === 0 && (
+        {postsToShow.length === 0 && (
           <div className="no-posts">No posts found.</div>
         )}
       </div>

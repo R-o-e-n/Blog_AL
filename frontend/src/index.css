@@ -751,3 +751,18 @@ button {
   justify-content: center;
   padding-top: 54px;
 }
+.navbar-category-filter {
+  margin-left: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 1rem;
+  padding: 0.38rem 1.15rem;
+  color: #a30515;
+  font-weight: 700;
+  transition: border 0.17s;
+}
+.navbar-category-filter:focus {
+  outline: none;
+  border-color: #be123c;
+}
